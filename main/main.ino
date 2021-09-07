@@ -1,3 +1,6 @@
+#include <SD.h>
+#include <SPI.h>
+
 int period = 1000;
 unsigned long prev = 0;
 unsigned long curr = 0;
@@ -13,11 +16,21 @@ float d5;
 
 void setup() {
   Serial.begin(9600);
-  digitalWrite(SW,HIGH);
+  Serial.print("Initializing SD card...");
+  pinMode(10, OUTPUT);
+  if (!SD.begin(20))
+  {
+    Serial.println("Card failed, or not present");
+    return;
+  }
+  Serial.println("microSD card is ready");
+  digitalWrite(SW, HIGH);
+
 }
 
 void loop() {
   curr = millis();
+  
   if (curr - prev >= period) {
     if (count == 1) {
       d0 = analogRead(0);
@@ -27,13 +40,29 @@ void loop() {
       d4 = analogRead(4);
       d5 = analogRead(5);
 
-      Serial.println(d0);
-      Serial.println(d1);
-      Serial.println(d2);
-      Serial.println(d3);
-      Serial.println(d4);
-      Serial.println(d5);
-      Serial.println("---------");
+      File dataFile = SD.open("Log.TXT", FILE_WRITE);
+        
+      Serial.print("Running  ");
+      if (dataFile)
+      {
+        dataFile.print(d0, DEC);
+        dataFile.print(",");
+        dataFile.print(d1, DEC);
+        dataFile.print(",");
+        dataFile.print(d2, DEC);
+        dataFile.print(",");
+        dataFile.print(d3, DEC);
+        dataFile.print(",");
+        dataFile.print(d4, DEC);
+        dataFile.print(",");
+        dataFile.println(d5, DEC);
+
+        dataFile.close();
+      }
+      else
+      {
+        Serial.println("error opening Log file");
+      }
     }
     prev = curr;
     if (inz == 0) {
@@ -49,7 +78,9 @@ void loop() {
   }
   else if (digitalRead(SW) == LOW && count == 1) {
     count = 0;
+   // dataFile.close();
     Serial.println("File closed");
+    Serial.println("finished");
     inz = 0;
     delay(200);
   }
