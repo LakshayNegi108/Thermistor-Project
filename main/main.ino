@@ -13,6 +13,7 @@ float d5;
 
 void setup() {
   Serial.begin(9600);
+  digitalWrite(SW,HIGH);
 }
 
 void loop() {
@@ -42,11 +43,11 @@ void loop() {
       }
     }
   }
-  if (digitalRead(SW) == HIGH && count == 0) {
+  if (digitalRead(SW) == LOW && count == 0) {
     count = 1;
     delay(200);
   }
-  else if (digitalRead(SW) == HIGH && count == 1) {
+  else if (digitalRead(SW) == LOW && count == 1) {
     count = 0;
     Serial.println("File closed");
     inz = 0;
