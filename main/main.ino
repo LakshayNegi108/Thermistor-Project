@@ -1,5 +1,4 @@
 #include <SD.h>
-#include <SPI.h>
 
 int period = 1000;
 unsigned long prev = 0;
@@ -7,6 +6,7 @@ unsigned long curr = 0;
 static int count = 0;
 #define SW 8
 static int inz = 0;
+static int heading = 0;
 float d0;
 float d1;
 float d2;
@@ -25,14 +25,18 @@ void setup() {
   }
   Serial.println("microSD card is ready");
   digitalWrite(SW, HIGH);
-
 }
 
 void loop() {
   curr = millis();
-  
   if (curr - prev >= period) {
     if (count == 1) {
+      File dataFile = SD.open("Log.csv", FILE_WRITE);
+      if (heading == 0) {
+        dataFile.println("T1,T2,T3,T4,T5,T6");
+        heading = 1;
+      }
+     // File dataFile = SD.open("Log.csv", FILE_WRITE);
       d0 = analogRead(0);
       d1 = analogRead(1);
       d2 = analogRead(2);
@@ -40,8 +44,8 @@ void loop() {
       d4 = analogRead(4);
       d5 = analogRead(5);
 
-      File dataFile = SD.open("Log.TXT", FILE_WRITE);
-        
+     // File dataFile = SD.open("Log.csv", FILE_WRITE);
+
       Serial.print("Running  ");
       if (dataFile)
       {
@@ -78,7 +82,7 @@ void loop() {
   }
   else if (digitalRead(SW) == LOW && count == 1) {
     count = 0;
-   // dataFile.close();
+    // dataFile.close();
     Serial.println("File closed");
     Serial.println("finished");
     inz = 0;
