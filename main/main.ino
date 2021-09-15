@@ -11,7 +11,6 @@ const int rs = 7, en = 6, D4 = 5, D5 = 4, D6 = 3, D7 = 2;
 LiquidCrystal lcd(rs, en, D4, D5, D6, D7);
 
 static int heading = 0;
-float Vo;
 float R1 = 10000.0; //Known Resistance of Thermistor
 float logR2, R2, T, T1, T2, T3, T4, T5, T6;
 float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
