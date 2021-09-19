@@ -15,6 +15,9 @@ float R1 = 10000.0; //Known Resistance of Thermistor
 float logR2, R2, T, T1, T2, T3, T4, T5, T6;
 float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
 
+boolean long_flag = false;
+unsigned int i = 0;
+
 void print_values() {
   d0 = analogRead(0);
   d1 = analogRead(1);
@@ -99,7 +102,7 @@ void file_new() {
   lcd.println("File");
 }
 int f_increment = 0;
-void sd_C_file() { 
+void sd_C_file() {
   String filename = "Log";
   String results = String(f_increment);
   String Name = (filename + results + ".csv");
@@ -129,23 +132,13 @@ void sd_C_file() {
   else
   {
     Serial.println("error opening Log file");
+    lcd.clear();
     lcd.println("error opening Log file");
   }
 }
 
-int LED1 = 11;
-int LED2 = 12;
-
-boolean LED1State = false;
-boolean LED2State = false;
-
-boolean long_flag = false;
-unsigned int i = 0;
-
 void setup() {
   Serial.begin(9600);
-  pinMode(LED1, OUTPUT);
-  pinMode(LED2, OUTPUT);
   pinMode(10, OUTPUT);
   pinMode(SW, INPUT_PULLUP);
   if (!SD.begin(20))
@@ -169,8 +162,6 @@ void loop() {
       Serial.print(i);
       i++;
       if (i > 200) {
-        LED1State = !LED1State;
-        digitalWrite(LED1, LED1State);
         i = 0;
         long_flag = true;
         file_new();
@@ -184,15 +175,13 @@ void loop() {
     if (long_flag == false) {
       count = 1;
       delay(200);
-      LED2State = !LED2State;
-      digitalWrite(LED2, LED2State);
       i = 0;
     }
   }
   else if (digitalRead(SW) == LOW && count == 1) {
     count = 0;
     file_closed();
-    delay(200);
+    delay(500);
   }
   if (start - finished > elapsed) {
     if (count == 1) {
